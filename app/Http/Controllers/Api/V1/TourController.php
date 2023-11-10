@@ -10,9 +10,12 @@ use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
-    public function index(Travel $travel)
+    public function index(Travel $travel, Request $request)
     {
         $tours =  $travel->tours()
+            ->when($request->dateFrom, function ($query) use ($request) {
+                $query->where('starting_date', '>=', $request->dateFrom);
+            })
             ->orderBy('starting_date')
             ->paginate();
 
