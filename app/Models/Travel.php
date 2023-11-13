@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Travel extends Model
 {
-    use HasFactory, Sluggable, HasUuids;
+    use HasFactory, HasUuids, Sluggable;
 
     protected $table = 'travels';
 
-    protected $fillable =  [
+    protected $fillable = [
         'is_public',
         'slug',
         'name',
@@ -28,21 +28,22 @@ class Travel extends Model
         return $this->hasMany(Tour::class);
     }
 
+    public function numberOfNights(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => $attributes['number_of_days'] - 1
+        );
+    }
+
+    /**
+     * Return the sluggable configuration array for this model.
+     */
     public function sluggable(): array
     {
         return [
             'slug' => [
-                'source' => 'name'
-            ]
+                'source' => 'name',
+            ],
         ];
     }
-
-    public function numberOfNights(): Attribute
-    {
-        return Attribute::make(
-            get: fn($value, $attributes) => $attributes['number_of_days'] - 1,
-        );
-
-    }
-
 }
